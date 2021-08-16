@@ -1,0 +1,42 @@
+Version:
+
+libosmocom 1.4.0
+osmo-trx-lms 1.2.0
+osmo-nitb 1.1.0
+osmo-bts-trx 1.2.1
+osmo-stp 1.3.0
+osmo-ggsn 1.6.0
+osmo-sgsn 1.6.2
+osmo-pcu 0.8.0
+osmo-sip-connector 1.3.0
+--------------------------------------------------------------------------------------------------
+
+POC:
+
+Open a terminal:
+
+echo 1 > /proc/sys/net/ipv4/ip_forward
+iptables -t nat -A POSTROUTING -o wlo1 -j MASQUERADE
+iptables -t nat -A POSTROUTING --out-interface wlo1 -j MASQUERADE
+iptables -A FORWARD --in-interface tun4 -j ACCEPT
+iptables -A POSTROUTING -s 176.16.1.1/24 -t nat -o wlo1 -j MASQUERADE
+
+Open a terminal: sudo osmo-nitb -c /opt/osmocom2g/.osmocom/openbsc.cfg -l /opt/osmocom2g/.osmocom/hlr.sqlite3 -M /tmp/msc_mncc -P -m -C --debug=DRLL:DCC:DMM:DRR:DRSL:DNM
+
+Open a terminal: sudo osmo-bts-trx -c /opt/osmocom2g/.osmocom/osmo-bts.cfg
+
+Open a terminal: sudo osmo-trx-lms -C /opt/osmocom2g/.osmocom/osmo-trx-limesdr.cfg
+
+Open a terminal: sudo /usr/local/bin/osmo-pcu -c /opt/osmocom2g/.osmocom/osmo-pcu.cfg
+
+Open a terminal: sudo osmo-ggsn -c /opt/osmocom2g/.osmocom/osmo-ggsn.cfg
+
+Open a terminal: sudo osmo-sgsn -c /opt/osmocom2g/.osmocom/osmo-sgsn.cfg
+
+Open a terminal: sudo osmo-stp -c /opt/osmocom2g/.osmocom/osmo-stp.cfg
+
+Open a terminal: cd /tmp && sudo mv bsc_mncc msc_mncc
+
+Open a terminal: sudo osmo-sip-connector -c /opt/osmocom2g/.osmocom/osmo-sip-connector.cfg
+
+Open a terminal: sudo asterisk -vvvvv
